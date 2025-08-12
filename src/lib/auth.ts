@@ -12,7 +12,7 @@ export class AuthService {
       const { data: profile } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('user_id', user.id)
         .single();
 
       if (!profile) return null;
@@ -49,7 +49,7 @@ export class AuthService {
     const { data: profile } = await supabase
       .from('profiles')
       .select('*')
-      .eq('id', authData.user.id)
+      .eq('user_id', authData.user.id)
       .single();
 
     if (!profile) {
@@ -113,7 +113,7 @@ export class AuthService {
         name: userData.name,
         email: userData.email,
       })
-      .eq('id', user.id)
+      .eq('user_id', user.id)
       .select()
       .single();
 
