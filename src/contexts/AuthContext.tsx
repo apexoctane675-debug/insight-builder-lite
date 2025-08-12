@@ -55,17 +55,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     initializeAuth();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
-        try {
-          const user = await AuthService.getCurrentUser();
-          setAuthState({
-            user,
-            isAuthenticated: !!user,
-          });
-        } catch (error) {
-          console.error('Error getting user after sign in:', error);
-        }
+        // Defer async calls to prevent deadlock
+        setTimeout(async () => {
+          try {
+            const user = await AuthService.getCurrentUser();
+            setAuthState({
+              user,
+              isAuthenticated: !!user,
+            });
+          } catch (error) {
+            console.error('Error getting user after sign in:', error);
+          }
+        }, 0);
       } else if (event === 'SIGNED_OUT') {
         setAuthState({
           user: null,
