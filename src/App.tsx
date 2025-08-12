@@ -9,6 +9,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import NotesPage from "./pages/NotesPage";
 import CreateNotePage from "./pages/CreateNotePage";
+import DictionaryPage from "./pages/DictionaryPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -78,6 +79,11 @@ const AppRoutes = () => {
       <Route path="/notes/new" element={
         <ProtectedRoute>
           <CreateNotePage />
+        </ProtectedRoute>
+      } />
+      <Route path="/search" element={
+        <ProtectedRoute>
+          <DictionaryPage />
         </ProtectedRoute>
       } />
       
