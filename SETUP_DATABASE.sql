@@ -1,5 +1,5 @@
 -- SmartStudy Lite Database Schema
--- Run this SQL in your Supabase SQL Editor
+-- This will create all necessary tables for the education app
 
 -- Create profiles table for additional user data
 CREATE TABLE IF NOT EXISTS profiles (
@@ -50,45 +50,58 @@ ALTER TABLE quizzes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE quiz_results ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policies for profiles
+DROP POLICY IF EXISTS "Users can view own profile" ON profiles;
 CREATE POLICY "Users can view own profile" ON profiles
   FOR SELECT USING (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
 CREATE POLICY "Users can update own profile" ON profiles
   FOR UPDATE USING (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Users can insert own profile" ON profiles;
 CREATE POLICY "Users can insert own profile" ON profiles
   FOR INSERT WITH CHECK (auth.uid() = id);
 
 -- Create RLS policies for notes
+DROP POLICY IF EXISTS "Users can view own notes" ON notes;
 CREATE POLICY "Users can view own notes" ON notes
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own notes" ON notes;
 CREATE POLICY "Users can insert own notes" ON notes
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update own notes" ON notes;
 CREATE POLICY "Users can update own notes" ON notes
   FOR UPDATE USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete own notes" ON notes;
 CREATE POLICY "Users can delete own notes" ON notes
   FOR DELETE USING (auth.uid() = user_id);
 
 -- Create RLS policies for quizzes
+DROP POLICY IF EXISTS "Users can view own quizzes" ON quizzes;
 CREATE POLICY "Users can view own quizzes" ON quizzes
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own quizzes" ON quizzes;
 CREATE POLICY "Users can insert own quizzes" ON quizzes
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update own quizzes" ON quizzes;
 CREATE POLICY "Users can update own quizzes" ON quizzes
   FOR UPDATE USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete own quizzes" ON quizzes;
 CREATE POLICY "Users can delete own quizzes" ON quizzes
   FOR DELETE USING (auth.uid() = user_id);
 
 -- Create RLS policies for quiz_results
+DROP POLICY IF EXISTS "Users can view own quiz results" ON quiz_results;
 CREATE POLICY "Users can view own quiz results" ON quiz_results
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own quiz results" ON quiz_results;
 CREATE POLICY "Users can insert own quiz results" ON quiz_results
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
@@ -122,8 +135,10 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Create triggers for updated_at
+DROP TRIGGER IF EXISTS update_profiles_updated_at ON profiles;
 CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON profiles
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_notes_updated_at ON notes;
 CREATE TRIGGER update_notes_updated_at BEFORE UPDATE ON notes
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
