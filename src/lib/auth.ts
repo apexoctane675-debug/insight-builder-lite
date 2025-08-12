@@ -4,7 +4,9 @@ import { User, LoginData, SignupData } from '@/types/auth';
 export class AuthService {
   static async getCurrentUser(): Promise<User | null> {
     try {
+      console.log('AuthService: Getting current user...');
       const { data: { user } } = await supabase.auth.getUser();
+      console.log('AuthService: Auth user result:', { hasUser: !!user, userId: user?.id });
       if (!user) return null;
 
       const { data: profile } = await supabase
@@ -28,10 +30,13 @@ export class AuthService {
   }
 
   static async login(data: LoginData): Promise<User> {
+    console.log('AuthService: Attempting login for:', data.email);
     const { data: authData, error } = await supabase.auth.signInWithPassword({
       email: data.email,
       password: data.password,
     });
+
+    console.log('AuthService: Login result:', { hasUser: !!authData.user, error: error?.message });
 
     if (error) {
       throw new Error(error.message);
