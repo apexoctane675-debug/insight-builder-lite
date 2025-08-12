@@ -11,6 +11,7 @@ import SignupPage from '@/pages/SignupPage';
 import NotesPage from '@/pages/NotesPage';
 import CreateNotePage from '@/pages/CreateNotePage';
 import DictionaryPage from '@/pages/DictionaryPage';
+import QuizzesPage from '@/pages/QuizzesPage';
 import ProfilePage from '@/pages/ProfilePage';
 import NotFound from '@/pages/NotFound';
 
@@ -31,6 +32,7 @@ function App() {
                 <Route path="/signup" element={<SignupPage />} />
                 <Route path="/notes" element={<NotesPage />} />
                 <Route path="/notes/create" element={<CreateNotePage />} />
+                <Route path="/quizzes" element={<QuizzesPage />} />
                 <Route path="/dictionary" element={<DictionaryPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="*" element={<NotFound />} />

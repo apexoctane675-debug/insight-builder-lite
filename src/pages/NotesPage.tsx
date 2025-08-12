@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Search, Edit, Trash2, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Header from '@/components/layout/Header';
 import { NotesService } from '@/lib/notes';
 import { Note } from '@/types/notes';
 import { useToast } from '@/hooks/use-toast';
@@ -70,7 +69,6 @@ const NotesPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       
       <div className="container mx-auto px-4 py-8">
         {/* Header Section */}
@@ -90,7 +88,7 @@ const NotesPage: React.FC = () => {
           <Button 
             variant="hero"
             size="lg"
-            onClick={() => navigate('/notes/new')}
+            onClick={() => navigate('/notes/create')}
             className="flex items-center gap-2"
           >
             <Plus className="h-5 w-5" />
@@ -127,7 +125,7 @@ const NotesPage: React.FC = () => {
             {!searchQuery && (
               <Button 
                 variant="hero"
-                onClick={() => navigate('/notes/new')}
+                onClick={() => navigate('/notes/create')}
                 className="flex items-center gap-2"
               >
                 <Plus className="h-4 w-4" />

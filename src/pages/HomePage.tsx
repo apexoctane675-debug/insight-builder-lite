@@ -1,15 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Brain, User, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Header from '@/components/layout/Header';
+import { NotesService } from '@/lib/notes';
 import heroImage from '@/assets/hero-education.jpg';
 
 const HomePage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [notesCount, setNotesCount] = useState(0);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const notes = await NotesService.getNotes();
+        setNotesCount(notes.length);
+      } catch (error) {
+        console.error('Failed to load notes count:', error);
+      }
+    };
+    
+    loadStats();
+  }, []);
 
   const menuItems = [
     {
@@ -137,7 +151,7 @@ const HomePage: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">0</div>
+              <div className="text-3xl font-bold text-primary mb-2">{notesCount}</div>
               <div className="text-muted-foreground">Notes Created</div>
             </div>
             <div className="text-center">
