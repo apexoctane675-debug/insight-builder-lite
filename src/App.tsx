@@ -13,89 +13,91 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Protected Route wrapper
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, loading } = useAuth();
-  
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-primary to-accent rounded-2xl flex items-center justify-center animate-pulse">
-            <span className="text-white font-bold text-2xl">S</span>
-          </div>
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  return <>{children}</>;
-};
-
-// Public Route wrapper (redirects to home if already authenticated)
-const PublicRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, loading } = useAuth();
-  
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-primary to-accent rounded-2xl flex items-center justify-center animate-pulse">
-            <span className="text-white font-bold text-2xl">S</span>
-          </div>
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-  
-  if (isAuthenticated) {
-    return <Navigate to="/" replace />;
-  }
-  
-  return <>{children}</>;
-};
-
-const AppRoutes = () => (
-  <Routes>
-    {/* Protected Routes */}
-    <Route path="/" element={
-      <ProtectedRoute>
-        <HomePage />
-      </ProtectedRoute>
-    } />
-    <Route path="/notes" element={
-      <ProtectedRoute>
-        <NotesPage />
-      </ProtectedRoute>
-    } />
-    <Route path="/notes/new" element={
-      <ProtectedRoute>
-        <CreateNotePage />
-      </ProtectedRoute>
-    } />
+const AppRoutes = () => {
+  // Protected Route wrapper - now defined inside AuthProvider context
+  const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+    const { isAuthenticated, loading } = useAuth();
     
-    {/* Public Routes */}
-    <Route path="/login" element={
-      <PublicRoute>
-        <LoginPage />
-      </PublicRoute>
-    } />
-    <Route path="/signup" element={
-      <PublicRoute>
-        <SignupPage />
-      </PublicRoute>
-    } />
+    if (loading) {
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-primary to-accent rounded-2xl flex items-center justify-center animate-pulse">
+              <span className="text-white font-bold text-2xl">S</span>
+            </div>
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      );
+    }
     
-    {/* 404 Route */}
-    <Route path="*" element={<NotFound />} />
-  </Routes>
-);
+    if (!isAuthenticated) {
+      return <Navigate to="/login" replace />;
+    }
+    
+    return <>{children}</>;
+  };
+
+  // Public Route wrapper - now defined inside AuthProvider context
+  const PublicRoute = ({ children }: { children: React.ReactNode }) => {
+    const { isAuthenticated, loading } = useAuth();
+    
+    if (loading) {
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-primary to-accent rounded-2xl flex items-center justify-center animate-pulse">
+              <span className="text-white font-bold text-2xl">S</span>
+            </div>
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      );
+    }
+    
+    if (isAuthenticated) {
+      return <Navigate to="/" replace />;
+    }
+    
+    return <>{children}</>;
+  };
+
+  return (
+    <Routes>
+      {/* Protected Routes */}
+      <Route path="/" element={
+        <ProtectedRoute>
+          <HomePage />
+        </ProtectedRoute>
+      } />
+      <Route path="/notes" element={
+        <ProtectedRoute>
+          <NotesPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/notes/new" element={
+        <ProtectedRoute>
+          <CreateNotePage />
+        </ProtectedRoute>
+      } />
+      
+      {/* Public Routes */}
+      <Route path="/login" element={
+        <PublicRoute>
+          <LoginPage />
+        </PublicRoute>
+      } />
+      <Route path="/signup" element={
+        <PublicRoute>
+          <SignupPage />
+        </PublicRoute>
+      } />
+      
+      {/* 404 Route */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
