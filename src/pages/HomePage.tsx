@@ -30,7 +30,7 @@ const HomePage: React.FC = () => {
       title: "Word Lookup",
       description: "Search and learn new words with definitions",
       icon: Search,
-      path: "/search",
+      path: "/dictionary",
       color: "from-secondary to-green-400",
     },
     {
