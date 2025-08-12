@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import Header from '@/components/layout/Header';
 import { useToast } from '@/hooks/use-toast';
 
 interface Phonetic {
@@ -99,7 +98,6 @@ const DictionaryPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       
       <div className="container mx-auto px-4 py-8">
         {/* Header Section */}
