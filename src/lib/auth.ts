@@ -1,96 +1,126 @@
+import { supabase } from '@/integrations/supabase/client';
 import { User, LoginData, SignupData } from '@/types/auth';
 
-// Mock authentication service using localStorage
-const AUTH_STORAGE_KEY = 'smartstudy_auth';
-const USERS_STORAGE_KEY = 'smartstudy_users';
-
 export class AuthService {
-  static getCurrentUser(): User | null {
-    const authData = localStorage.getItem(AUTH_STORAGE_KEY);
-    if (!authData) return null;
-    
+  static async getCurrentUser(): Promise<User | null> {
     try {
-      return JSON.parse(authData);
-    } catch {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (!profile) return null;
+
+      return {
+        id: profile.id,
+        name: profile.name,
+        email: profile.email,
+        createdAt: profile.created_at,
+      };
+    } catch (error) {
+      console.error('Error getting current user:', error);
       return null;
     }
   }
 
   static async login(data: LoginData): Promise<User> {
-    const users = this.getUsers();
-    const user = users.find(u => u.email === data.email);
-    
-    if (!user) {
-      throw new Error('User not found');
+    const { data: authData, error } = await supabase.auth.signInWithPassword({
+      email: data.email,
+      password: data.password,
+    });
+
+    if (error) {
+      throw new Error(error.message);
     }
-    
-    // In a real app, you'd verify the password hash
-    // For demo purposes, we'll use a simple check
-    if (data.password.length < 6) {
-      throw new Error('Invalid password');
+
+    if (!authData.user) {
+      throw new Error('Login failed');
     }
-    
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
-    return user;
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', authData.user.id)
+      .single();
+
+    if (!profile) {
+      throw new Error('Profile not found');
+    }
+
+    return {
+      id: profile.id,
+      name: profile.name,
+      email: profile.email,
+      createdAt: profile.created_at,
+    };
   }
 
   static async signup(data: SignupData): Promise<User> {
     if (data.password !== data.confirmPassword) {
       throw new Error('Passwords do not match');
     }
-    
-    if (data.password.length < 6) {
-      throw new Error('Password must be at least 6 characters');
+
+    const { data: authData, error } = await supabase.auth.signUp({
+      email: data.email,
+      password: data.password,
+      options: {
+        data: {
+          name: data.name,
+        },
+      },
+    });
+
+    if (error) {
+      throw new Error(error.message);
     }
-    
-    const users = this.getUsers();
-    
-    if (users.find(u => u.email === data.email)) {
-      throw new Error('User already exists');
+
+    if (!authData.user) {
+      throw new Error('Signup failed');
     }
-    
-    const user: User = {
-      id: Date.now().toString(),
+
+    // The profile will be created automatically by the trigger
+    return {
+      id: authData.user.id,
       name: data.name,
       email: data.email,
       createdAt: new Date().toISOString(),
     };
-    
-    users.push(user);
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
-    
-    return user;
   }
 
-  static logout(): void {
-    localStorage.removeItem(AUTH_STORAGE_KEY);
-  }
-
-  static updateProfile(userData: Partial<User>): User {
-    const currentUser = this.getCurrentUser();
-    if (!currentUser) throw new Error('Not authenticated');
-    
-    const updatedUser = { ...currentUser, ...userData };
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(updatedUser));
-    
-    // Update in users array too
-    const users = this.getUsers();
-    const userIndex = users.findIndex(u => u.id === currentUser.id);
-    if (userIndex !== -1) {
-      users[userIndex] = updatedUser;
-      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+  static async logout(): Promise<void> {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      throw new Error(error.message);
     }
-    
-    return updatedUser;
   }
 
-  private static getUsers(): User[] {
-    const usersData = localStorage.getItem(USERS_STORAGE_KEY);
-    try {
-      return usersData ? JSON.parse(usersData) : [];
-    } catch {
-      return [];
+  static async updateProfile(userData: Partial<User>): Promise<User> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({
+        name: userData.name,
+        email: userData.email,
+      })
+      .eq('id', user.id)
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(error.message);
     }
+
+    return {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      createdAt: data.created_at,
+    };
   }
 }

@@ -30,7 +30,7 @@ const CreateNotePage: React.FC = () => {
 
     setLoading(true);
     try {
-      const note = NotesService.createNote({
+      const note = await NotesService.createNote({
         title: title.trim(),
         content: content.trim(),
       });
@@ -44,7 +44,7 @@ const CreateNotePage: React.FC = () => {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to create note.",
+        description: error instanceof Error ? error.message : "Failed to create note.",
         variant: "destructive",
       });
     } finally {

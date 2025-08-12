@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 const NotesPage: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -19,15 +20,26 @@ const NotesPage: React.FC = () => {
     loadNotes();
   }, []);
 
-  const loadNotes = () => {
-    const userNotes = NotesService.getNotes();
-    setNotes(userNotes);
+  const loadNotes = async () => {
+    try {
+      setLoading(true);
+      const userNotes = await NotesService.getNotes();
+      setNotes(userNotes);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load notes.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDeleteNote = (id: string) => {
+  const handleDeleteNote = async (id: string) => {
     try {
-      NotesService.deleteNote(id);
-      loadNotes();
+      await NotesService.deleteNote(id);
+      await loadNotes();
       toast({
         title: "Note deleted",
         description: "Your note has been successfully deleted.",

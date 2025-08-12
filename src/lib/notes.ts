@@ -1,86 +1,126 @@
+import { supabase } from '@/integrations/supabase/client';
 import { Note, CreateNoteData, UpdateNoteData } from '@/types/notes';
-import { AuthService } from './auth';
-
-const NOTES_STORAGE_KEY = 'smartstudy_notes';
 
 export class NotesService {
-  static getNotes(): Note[] {
-    const user = AuthService.getCurrentUser();
+  static async getNotes(): Promise<Note[]> {
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return [];
-    
-    const notesData = localStorage.getItem(NOTES_STORAGE_KEY);
-    try {
-      const allNotes = notesData ? JSON.parse(notesData) : [];
-      return allNotes.filter((note: Note) => note.userId === user.id);
-    } catch {
+
+    const { data, error } = await supabase
+      .from('notes')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('updated_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching notes:', error);
       return [];
     }
+
+    return data.map(note => ({
+      id: note.id,
+      title: note.title,
+      content: note.content || '',
+      userId: note.user_id,
+      createdAt: note.created_at,
+      updatedAt: note.updated_at,
+    }));
   }
 
-  static getNote(id: string): Note | null {
-    const notes = this.getNotes();
-    return notes.find(note => note.id === id) || null;
-  }
+  static async getNote(id: string): Promise<Note | null> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
 
-  static createNote(data: CreateNoteData): Note {
-    const user = AuthService.getCurrentUser();
-    if (!user) throw new Error('Not authenticated');
-    
-    const note: Note = {
-      id: Date.now().toString(),
+    const { data, error } = await supabase
+      .from('notes')
+      .select('*')
+      .eq('id', id)
+      .eq('user_id', user.id)
+      .single();
+
+    if (error || !data) {
+      return null;
+    }
+
+    return {
+      id: data.id,
       title: data.title,
-      content: data.content,
-      userId: user.id,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      content: data.content || '',
+      userId: data.user_id,
+      createdAt: data.created_at,
+      updatedAt: data.updated_at,
     };
-    
-    const allNotes = this.getAllNotes();
-    allNotes.push(note);
-    localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(allNotes));
-    
-    return note;
   }
 
-  static updateNote(id: string, data: UpdateNoteData): Note {
-    const user = AuthService.getCurrentUser();
+  static async createNote(noteData: CreateNoteData): Promise<Note> {
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
-    
-    const allNotes = this.getAllNotes();
-    const noteIndex = allNotes.findIndex(note => note.id === id && note.userId === user.id);
-    
-    if (noteIndex === -1) {
-      throw new Error('Note not found');
+
+    const { data, error } = await supabase
+      .from('notes')
+      .insert({
+        title: noteData.title,
+        content: noteData.content,
+        user_id: user.id,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(error.message);
     }
-    
-    const updatedNote = {
-      ...allNotes[noteIndex],
-      ...data,
-      updatedAt: new Date().toISOString(),
+
+    return {
+      id: data.id,
+      title: data.title,
+      content: data.content || '',
+      userId: data.user_id,
+      createdAt: data.created_at,
+      updatedAt: data.updated_at,
     };
-    
-    allNotes[noteIndex] = updatedNote;
-    localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(allNotes));
-    
-    return updatedNote;
   }
 
-  static deleteNote(id: string): void {
-    const user = AuthService.getCurrentUser();
+  static async updateNote(id: string, noteData: UpdateNoteData): Promise<Note> {
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
-    
-    const allNotes = this.getAllNotes();
-    const filteredNotes = allNotes.filter(note => !(note.id === id && note.userId === user.id));
-    
-    localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(filteredNotes));
+
+    const { data, error } = await supabase
+      .from('notes')
+      .update({
+        title: noteData.title,
+        content: noteData.content,
+      })
+      .eq('id', id)
+      .eq('user_id', user.id)
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return {
+      id: data.id,
+      title: data.title,
+      content: data.content || '',
+      userId: data.user_id,
+      createdAt: data.created_at,
+      updatedAt: data.updated_at,
+    };
   }
 
-  private static getAllNotes(): Note[] {
-    const notesData = localStorage.getItem(NOTES_STORAGE_KEY);
-    try {
-      return notesData ? JSON.parse(notesData) : [];
-    } catch {
-      return [];
+  static async deleteNote(id: string): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { error } = await supabase
+      .from('notes')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', user.id);
+
+    if (error) {
+      throw new Error(error.message);
     }
   }
 }
