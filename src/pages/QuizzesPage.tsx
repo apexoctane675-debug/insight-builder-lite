@@ -35,13 +35,13 @@ const QuizzesPage: React.FC = () => {
 
   const [quizSettings, setQuizSettings] = useState<QuizSettings>({
     amount: 10,
-    category: '',
-    difficulty: '',
-    type: ''
+    category: 'any',
+    difficulty: 'any',
+    type: 'any'
   });
 
   const categories = [
-    { value: '', label: 'Any Category' },
+    { value: 'any', label: 'Any Category' },
     { value: '9', label: 'General Knowledge' },
     { value: '10', label: 'Entertainment: Books' },
     { value: '11', label: 'Entertainment: Film' },
@@ -65,14 +65,14 @@ const QuizzesPage: React.FC = () => {
   ];
 
   const difficulties = [
-    { value: '', label: 'Any Difficulty' },
+    { value: 'any', label: 'Any Difficulty' },
     { value: 'easy', label: 'Easy' },
     { value: 'medium', label: 'Medium' },
     { value: 'hard', label: 'Hard' }
   ];
 
   const types = [
-    { value: '', label: 'Any Type' },
+    { value: 'any', label: 'Any Type' },
     { value: 'multiple', label: 'Multiple Choice' },
     { value: 'boolean', label: 'True / False' }
   ];
@@ -89,9 +89,9 @@ const QuizzesPage: React.FC = () => {
     try {
       let url = `https://opentdb.com/api.php?amount=${quizSettings.amount}`;
       
-      if (quizSettings.category) url += `&category=${quizSettings.category}`;
-      if (quizSettings.difficulty) url += `&difficulty=${quizSettings.difficulty}`;
-      if (quizSettings.type) url += `&type=${quizSettings.type}`;
+      if (quizSettings.category && quizSettings.category !== 'any') url += `&category=${quizSettings.category}`;
+      if (quizSettings.difficulty && quizSettings.difficulty !== 'any') url += `&difficulty=${quizSettings.difficulty}`;
+      if (quizSettings.type && quizSettings.type !== 'any') url += `&type=${quizSettings.type}`;
 
       const response = await fetch(url);
       const data = await response.json();
