@@ -31,6 +31,8 @@ const QuizzesPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
+  console.log('QuizzesPage rendered, currentView:', currentView);
+
   const [quizSettings, setQuizSettings] = useState<QuizSettings>({
     amount: 10,
     category: '',
