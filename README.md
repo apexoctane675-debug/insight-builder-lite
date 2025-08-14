@@ -1,73 +1,173 @@
-# Welcome to your Lovable project
+# 🎓 EduLearn - Personal Learning Platform
 
-## Project info
+A comprehensive learning platform that helps users organize their studies through notes, interactive quizzes, and vocabulary building tools.
 
-**URL**: https://lovable.dev/projects/3c1e9688-bee3-46c8-8ef0-2e123481eafd
+## 🌟 Features
 
-## How can I edit this code?
+### 📝 Notes Management
+- Create, edit, and organize personal study notes
+- Rich text content support
+- Quick access to all your notes
+- Search and filter capabilities
 
-There are several ways of editing your application.
+### 🧠 Interactive Quizzes
+- Access thousands of trivia questions via Open Trivia Database
+- Customizable quiz settings:
+  - **Categories**: General Knowledge, Science, History, Entertainment, Sports, and more
+  - **Difficulty Levels**: Easy, Medium, Hard, or Any
+  - **Question Types**: Multiple Choice, True/False, or Mixed
+  - **Question Count**: 5-50 questions per quiz
+- Real-time scoring and results tracking
+- Immediate feedback on answers
 
-**Use Lovable**
+### 📚 Dictionary (Coming Soon)
+- Vocabulary building tools
+- Word definitions and meanings
+- Personal word collections
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/3c1e9688-bee3-46c8-8ef0-2e123481eafd) and start prompting.
+### 👤 User Profile
+- Personal account management
+- Learning progress tracking
+- Customizable user settings
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🚀 How to Use
 
-**Use your preferred IDE**
+### Getting Started
+1. **Sign Up**: Create your account with email and password
+2. **Login**: Access your personal learning dashboard
+3. **Explore**: Navigate through different learning tools
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Taking Quizzes
+1. Go to the **Quizzes** section
+2. Configure your quiz settings:
+   - Select a category (or choose "Any Category")
+   - Pick difficulty level
+   - Choose question type
+   - Set number of questions (5-50)
+3. Click **Start Quiz** to begin
+4. Answer questions and get instant feedback
+5. View your final score and review answers
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Managing Notes
+1. Navigate to the **Notes** section
+2. Click **Create New Note** to add content
+3. Write your study materials with title and content
+4. Save and organize your notes for easy access
+5. Edit or delete notes as needed
 
-Follow these steps:
+### Profile Management
+1. Access your **Profile** to update personal information
+2. View your learning statistics
+3. Manage account settings
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 🛠️ Technologies Used
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+- **Frontend**: React 18 with TypeScript
+- **Styling**: Tailwind CSS with custom design system
+- **UI Components**: Radix UI (shadcn/ui)
+- **Backend**: Supabase (Authentication, Database, Real-time)
+- **Routing**: React Router DOM
+- **State Management**: React Query (TanStack Query)
+- **Build Tool**: Vite
+- **External APIs**: Open Trivia Database API
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 🏗️ Architecture
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+### Frontend Structure
+```
+src/
+├── components/          # Reusable UI components
+│   ├── layout/         # Layout components (Header, etc.)
+│   └── ui/             # Design system components
+├── contexts/           # React contexts (Auth)
+├── hooks/              # Custom React hooks
+├── lib/                # Utility functions and services
+├── pages/              # Page components
+├── types/              # TypeScript type definitions
+└── integrations/       # External service integrations
 ```
 
-**Edit a file directly in GitHub**
+### Key Services
+- **AuthService**: Handles user authentication and profile management
+- **NotesService**: Manages CRUD operations for user notes
+- **QuizService**: Integrates with Open Trivia DB API for quiz functionality
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🔐 Authentication & Security
 
-**Use GitHub Codespaces**
+- Secure user authentication via Supabase Auth
+- Row Level Security (RLS) policies protect user data
+- JWT-based session management
+- Automatic session persistence
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 📱 Responsive Design
 
-## What technologies are used for this project?
+The platform is fully responsive and works seamlessly across:
+- Desktop computers
+- Tablets
+- Mobile devices
 
-This project is built with:
+## 🎨 Design System
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- Custom color palette with semantic tokens
+- Consistent typography and spacing
+- Dark/light mode support (inherited from system)
+- Accessible components following WCAG guidelines
 
-## How can I deploy this project?
+## 🚀 Development
 
-Simply open [Lovable](https://lovable.dev/projects/3c1e9688-bee3-46c8-8ef0-2e123481eafd) and click on Share -> Publish.
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn package manager
 
-## Can I connect a custom domain to my Lovable project?
+### Setup
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Start development server: `npm run dev`
+4. Open `http://localhost:5173` in your browser
 
-Yes, you can!
+### Environment Variables
+The application uses Supabase for backend services. Configuration is managed through the integrated Supabase client.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 📊 Quiz Categories Available
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- General Knowledge
+- Entertainment (Books, Film, Music, TV, Video Games)
+- Science & Nature
+- Mathematics
+- Mythology
+- Sports
+- Geography
+- History
+- Politics
+- Art
+- Celebrities
+- Animals
+- Vehicles
+- Comics
+- Gadgets
+- Japanese Anime & Manga
+- Cartoon & Animations
+
+## 🎯 Future Enhancements
+
+- Advanced note-taking features (markdown support, tags)
+- Quiz progress analytics and detailed statistics
+- Collaborative study features
+- Spaced repetition learning system
+- Mobile app version
+- Offline capability
+- Advanced dictionary with etymology and examples
+
+## 🤝 Contributing
+
+This is a personal learning platform. For suggestions or feedback, please create an issue or reach out to the development team.
+
+## 📄 License
+
+This project is developed for educational purposes.
+
+---
+
+**Start your learning journey today!** 🚀
+
+Visit the platform and create your account to access personalized study tools and track your learning progress.
